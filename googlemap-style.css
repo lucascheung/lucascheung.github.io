@@ -1,7 +1,7 @@
 #map, #pano {
   float: left;
   height: 100%;
-  width: 50%;
+  width: 40%;
 
 }
 /* Optional: Makes the sample page fill the window. */
@@ -9,4 +9,11 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+#output{
+  font-size:5.0vw;
+  text-align: center;
+  font-family: Helvetica;
+  font-weight: bold;
 }

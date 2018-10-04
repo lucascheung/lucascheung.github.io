@@ -9,6 +9,7 @@
   <body>
     <div id="map"></div>
     <div id="pano"></div>
+    <div id="output"></div>
     <script>
       function initMap() {
         var directionsService = new google.maps.DirectionsService;
@@ -17,7 +18,7 @@
         var london = new google.maps.LatLng(51.5084, -0.1069);
         var homeAddress = new google.maps.LatLng(51.4178, -0.2552);
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 15,
+          zoom: 7,
           center: pegmanPosition,
         });
         directionsDisplay.setMap(map);
@@ -33,11 +34,28 @@
         map.setStreetView(panorama);
         panorama.addListener('position_changed', function(){
             map.setCenter(panorama.getPosition());
+            map.setZoom(15)
+            getdistance([panorama.getPosition()])
         }); 
-        // document.getElementById('start').addEventListener('change', onChangeHandler);
-        // document.getElementById('end').addEventListener('change', onChangeHandler);
-      }
 
+        var service = new google.maps.DistanceMatrixService;
+        function getdistance (start){
+          service.getDistanceMatrix({
+            origins: start,
+            destinations: [homeAddress],
+            travelMode: 'WALKING',
+            unitSystem: google.maps.UnitSystem.METRIC,
+          },function(response, status){
+            if (status !== 'OK'){
+              alert('Error was: ' + status);
+            } else {
+              var outputDiv = document.getElementById('output');
+              outputDiv.innerHTML = response.rows[0].elements[0].distance.text;
+            }
+          })
+        }
+        getdistance([pegmanPosition]);
+      }
       function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         var pegmanPosition = new google.maps.LatLng(51.5078212,-0.1076384);
         var london = new google.maps.LatLng(51.5084, -0.1069);
@@ -45,7 +63,7 @@
         directionsService.route({
           origin: pegmanPosition,
           destination: homeAddress,
-          travelMode: 'DRIVING'
+          travelMode: 'WALKING'
         }, function(response, status) {
           if (status === 'OK') {
             directionsDisplay.setDirections(response);
