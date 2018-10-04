@@ -35,7 +35,19 @@
         panorama.addListener('position_changed', function(){
             map.setCenter(panorama.getPosition());
             map.setZoom(15)
-            getdistance([panorama.getPosition()])
+            service.getDistanceMatrix({
+              origins: [panorama.getPosition()],
+              destinations: [homeAddress],
+              travelMode: 'WALKING',
+              unitSystem: google.maps.UnitSystem.METRIC,
+            },function(response, status){
+              if (status !== 'OK'){
+                alert('Error was: ' + status);
+              } else {
+                var outputDiv = document.getElementById('output');
+                outputDiv.innerHTML = response.rows[0].elements[0].distance.text;
+              }
+            })
         }); 
 
         var service = new google.maps.DistanceMatrixService;
