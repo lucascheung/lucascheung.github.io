@@ -7,8 +7,11 @@
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
+      #map, #pano {
+        float: left;
         height: 100%;
+        width: 50%;
+
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -33,28 +36,42 @@
   </head>
   <body>
     <div id="map"></div>
+    <div id="pano"></div>
     <script>
       function initMap() {
         var directionsService = new google.maps.DirectionsService;
         var directionsDisplay = new google.maps.DirectionsRenderer;
+        var pegmanPosition = new google.maps.LatLng(51.5078212,-0.1076384);
         var london = new google.maps.LatLng(51.5084, -0.1069);
         var homeAddress = new google.maps.LatLng(51.4178, -0.2552);
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 7,
-          center: london,
+          zoom: 15,
+          center: pegmanPosition,
         });
         directionsDisplay.setMap(map);
         calculateAndDisplayRoute(directionsService, directionsDisplay);
-        
+        var panorama = new google.maps.StreetViewPanorama(
+          document.getElementById('pano'), {
+            position: pegmanPosition,
+            pov: {
+              heading: 34,
+              pitch: 10
+            }
+          });
+        map.setStreetView(panorama);
+        panorama.addListener('position_changed', function(){
+            map.setCenter(panorama.getPosition());
+        }); 
         // document.getElementById('start').addEventListener('change', onChangeHandler);
         // document.getElementById('end').addEventListener('change', onChangeHandler);
       }
 
       function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+        var pegmanPosition = new google.maps.LatLng(51.5078212,-0.1076384);
         var london = new google.maps.LatLng(51.5084, -0.1069);
         var homeAddress = new google.maps.LatLng(51.4178, -0.2552);        
         directionsService.route({
-          origin: london,
+          origin: pegmanPosition,
           destination: homeAddress,
           travelMode: 'DRIVING'
         }, function(response, status) {
